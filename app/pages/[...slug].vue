@@ -1,16 +1,13 @@
-<script lang="ts" setup>
-const route = useRoute();
-const { data: post } = await useAsyncData(() => {
-  return queryCollection("blog").path(route.path).first();
+<script setup>
+const { path } = useRoute();
+
+const { data } = await useAsyncData(`content-${path}`, () => {
+  return queryContent().where({ _path: path }).findOne();
 });
 </script>
 
 <template>
-  <div v-if="post">
-    <!-- <nuxt-link to="/">
-      <small>« Back </small>
-    </nuxt-link> -->
-    <h1>{{ post.title }}</h1>
-    <ContentRenderer :value="post" />
-  </div>
+  <main class="prose text-left">
+    <ContentRenderer v-if="data" :value="data" />
+  </main>
 </template>
